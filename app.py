@@ -20,7 +20,6 @@ app = FastAPI()
 @dataclass
 class Session:
     
-    # def __init__(self, user_id: str = None, timer: SessionTimer):
     timer: SessionTimer
     current_position: int = 0
     next_event_id: int = -1
@@ -43,11 +42,7 @@ class Session:
         return event_id
         
 
-    
 sessions:Dict[str, Session] = {}
-# session_сode and websocket connection
-# websocket_connections: Dict[str, WebSocket] = {}
-
 
 
 use_mock_database = True
@@ -95,16 +90,6 @@ async def get_config(request: Request):
         session_code = check_session_code(data)
         map = generate_map(size = SIZE_MAP)
         event = db.get_random_problem()
-#         if session_code in sessions:
-#             if user_id in sessions[session_code]:
-#                 raise HTTPException(status_code=400, detail="User ID already exists in the session")
-#         else:
-#             sessions[session_code] = set()
-
-#         sessions[session_code].add(user_id)
-#         if websocket_connections[session_code]:
-#             await websocket_connections[session_code].send_json({"event": "joined_session", "session_code": session_code, "user_id": user_id})
-
 
         return JSONResponse(
             content={"event": event,"timmer": sessions[session_code].timer.get_timer(), "map": map},
@@ -174,54 +159,6 @@ def parse_field(data:dict, field:str):
     
     return value
     
-    
-    
-# @app.post('/join_session')
-# async def join_session(request: Request, websocket: WebSocket = None):
-#     try:
-#         data = await parse_request_data(request)
-#         session_code = data.get('session_code')
-#         user_id = data.get('user_id')
-
-#         if session_code is None or user_id is None:
-#             raise HTTPException(status_code=400, detail="User ID or session code isn't passed")
-
-
-#         if session_code in sessions:
-#             if user_id in sessions[session_code]:
-#                 raise HTTPException(status_code=400, detail="User ID already exists in the session")
-#         else:
-#             sessions[session_code] = set()
-
-#         sessions[session_code].add(user_id)
-#         if websocket_connections[session_code]:
-#             await websocket_connections[session_code].send_json({"event": "joined_session", "session_code": session_code, "user_id": user_id})
-
-
-#         return JSONResponse(content={"success": True}, status_code=200)
-#     except HTTPException as http_exc:
-#         return JSONResponse(content={"success": False, "error": http_exc.detail}, status_code=http_exc.status_code)
-#     except Exception as e:
-#         return JSONResponse(content={"success": False, "error": str(e)}, status_code=500)
-
-
-# @app.post('/leave_session')
-# async def leave_session(request: Request):
-#     data = await request.json()
-#     session_code = data.get('session_code')
-#     user_id = data.get('user_id')
-
-#     if session_code in sessions:
-#         if user_id in sessions[session_code]:
-#             sessions[session_code].remove(user_id)
-#             if not sessions[session_code]:
-#                 del sessions[session_code]
-#             return JSONResponse(content={"success": True}, status_code=200)
-#         else:
-#             raise HTTPException(status_code=400, detail="User ID does not exist in the session")
-#     else:
-#         raise HTTPException(status_code=400, detail="Session code does not exist")
-
 async def parse_request_data(request: Request) -> dict:
     content_type = request.headers.get('Content-Type')
 
@@ -234,20 +171,6 @@ async def parse_request_data(request: Request) -> dict:
 
     return data
 
-
-# @app.websocket("/ws/{session_сode}")
-# async def websocket_endpoint(session_сode: str, websocket: WebSocket):
-#     await websocket.accept()
-#     websocket_connections[session_сode] = websocket  # Store WebSocket connection with session ID
-    
-#     try:
-#         while True:
-#             data = await websocket.receive_text()
-#             # Handle incoming messages if needed
-#             await websocket.send_text(f"Message text was: {data}")
-#     except Exception as e:
-#         print(f"WebSocket error in session {session_сode}: {e}")
-#         del websocket_connections[session_сode]  # Remove WebSocket connection on error
 
 if __name__ == '__main__':
     sessions["TEST"] = Session(timer=SessionTimer(DEFAULT_TIME_HOURS))
