@@ -1,4 +1,5 @@
 import random
+import logging
 
 def generate_map(size: int, time_effect_step=5):
     map_data = []
@@ -13,9 +14,18 @@ def generate_map(size: int, time_effect_step=5):
         else:
             time_effect = 0
 
-        map_data.append({"type": field_type, "time_effect": time_effect})
+        map_data.append({"type": field_type, "price": time_effect})
     return map_data
 
+
+# Set up logging configuration
+logging.basicConfig(
+    level=logging.INFO,  # Set the logging level to INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'  # Define log message format
+)
+
+# Create a logger object
+logger = logging.getLogger(__name__)
 
 class SessionTimer:
     

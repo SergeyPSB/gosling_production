@@ -9,17 +9,18 @@ class Event:
     id: int
     description: str
     actions: List['Action']
+    is_final: bool = False
+    images: List['str'] = [],
+
     
     def to_json(self) -> dict:
         return {
             "id": self.id,
             "description": self.description,
+            "image": [image for image in self.images],
+            "is_final": self.is_final,
             "actions": [action.to_json() for action in self.actions]  # Convert actions to JSON
         }
-    
-    # def to_json(self) -> str:
-    #     return json.dumps(asdict(self), ensure_ascii=False)
-    
        
 @dataclass
 class Action:
